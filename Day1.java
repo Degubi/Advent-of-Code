@@ -1,62 +1,49 @@
 import java.nio.file.*;
+import java.util.*;
+import java.util.regex.*;
 import java.util.stream.*;
 
 public class Day1 {
-
-    interface NumericValueExtractor {
-        int extract(String line, int currentIndex);
-    }
+    static final Pattern NUMBER_DIGIT_ONLY_REGEX = Pattern.compile("\\d");
+    static final Pattern NUMBER_DIGIT_WORD_REGEX = Pattern.compile("\\d|one|two|three|four|five|six|seven|eight|nine");
 
 
     public static void main(String[] args) throws Exception {
         var lines = Files.readAllLines(Path.of("Day1.txt"));
 
         var part1Result = lines.stream()
-                               .mapToInt(k -> parseTwoDigitNumber(k, Day1::getDigitBasedNumericValue))
+                               .mapToInt(k -> parseTwoDigitNumber(k, NUMBER_DIGIT_ONLY_REGEX))
                                .sum();
 
         var part2Result = lines.stream()
-                               .mapToInt(k -> parseTwoDigitNumber(k, Day1::getDigitOrTextBasedNumericValue))
+                               .mapToInt(k -> parseTwoDigitNumber(k, NUMBER_DIGIT_WORD_REGEX))
                                .sum();
 
         System.out.println("Result 1: " + part1Result + ", result 2: " + part2Result);
     }
 
-    static int parseTwoDigitNumber(String line, NumericValueExtractor valueExtractor) {
-        var firstValue  = findNumber(line, valueExtractor, IntStream.iterate(0, k -> k < line.length(), k -> k + 1));
-        var secondValue = findNumber(line, valueExtractor, IntStream.iterate(line.length() - 1, k -> k >= 0, k -> k -1));
+    static int parseTwoDigitNumber(String line, Pattern regex) {
+        var matcher = regex.matcher(line);
+        var results = IntStream.range(0, line.length())
+                               .mapToObj(i -> matcher.find(i) ? matcher.group() : null)
+                               .filter(Objects::nonNull)
+                               .toArray(String[]::new);
 
-        return firstValue * 10 + secondValue;
+        return getNumericValue(results[0]) * 10 + getNumericValue(results[results.length - 1]);
     }
 
-    static int findNumber(String line, NumericValueExtractor valueExtractor, IntStream indexGenerator) {
-        return indexGenerator.map(i -> valueExtractor.extract(line, i))
-                             .filter(k -> k != -1)
-                             .findFirst()
-                             .orElseThrow();
-    }
-
-    static int getDigitBasedNumericValue(String line, int currentIndex) {
-        var currentChar = line.charAt(currentIndex);
-
-        return Character.isDigit(currentChar) ? Character.getNumericValue(currentChar) : -1;
-    }
-
-    static int getDigitOrTextBasedNumericValue(String line, int currentIndex) {
-        var digitBasedNumericValue = getDigitBasedNumericValue(line, currentIndex);
-
-        return digitBasedNumericValue != -1 ? digitBasedNumericValue : findOptionalNumericValueFromString(line, currentIndex);
-    }
-
-    static int findOptionalNumericValueFromString(String line, int currentIndex) {
-        return line.startsWith("one",   currentIndex) ? 1 :
-               line.startsWith("two",   currentIndex) ? 2 :
-               line.startsWith("three", currentIndex) ? 3 :
-               line.startsWith("four",  currentIndex) ? 4 :
-               line.startsWith("five",  currentIndex) ? 5 :
-               line.startsWith("six",   currentIndex) ? 6 :
-               line.startsWith("seven", currentIndex) ? 7 :
-               line.startsWith("eight", currentIndex) ? 8 :
-               line.startsWith("nine", currentIndex)  ? 9 : -1;
+    static int getNumericValue(String text) {
+        return switch(text) {
+            case "one"   -> 1;
+            case "two"   -> 2;
+            case "three" -> 3;
+            case "four"  -> 4;
+            case "five"  -> 5;
+            case "six"   -> 6;
+            case "seven" -> 7;
+            case "eight" -> 8;
+            case "nine"  -> 9;
+            default -> Character.getNumericValue(text.charAt(0));
+        };
     }
 }
