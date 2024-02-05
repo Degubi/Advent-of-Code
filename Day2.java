@@ -3,7 +3,6 @@ import java.util.*;
 import java.util.stream.*;
 
 public class Day2 {
-
     record Game(int id, Reveal[][] reveals) {}
     record Reveal(int count, String color) {}
 

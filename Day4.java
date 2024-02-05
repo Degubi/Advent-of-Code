@@ -8,6 +8,7 @@ public class Day4 {
 
     record Card(int id, int winningNumberCount) {}
 
+
     public static void main(String[] args) throws Exception {
         var cards = Files.lines(Path.of("Day4.txt"))
                          .map(Day4::createCard)

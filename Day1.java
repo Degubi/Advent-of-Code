@@ -10,7 +10,6 @@ public class Day1 {
 
     public static void main(String[] args) throws Exception {
         var lines = Files.readAllLines(Path.of("Day1.txt"));
-
         var part1Result = lines.stream()
                                .mapToInt(k -> parseTwoDigitNumber(k, NUMBER_DIGIT_ONLY_REGEX))
                                .sum();
