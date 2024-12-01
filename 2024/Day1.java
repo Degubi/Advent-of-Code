@@ -17,7 +17,7 @@ public class Main {
                                                   .collect(Collectors.groupingBy(k -> k, Collectors.counting()));
 
         var part1Result = IntStream.range(0, input.length)
-                                   .map(i -> Math.abs(firstColumnNumbers[i]- secondColumnNumbers[i]))
+                                   .map(i -> Math.abs(firstColumnNumbers[i] - secondColumnNumbers[i]))
                                    .sum();
 
         var part2Result = Arrays.stream(firstColumnNumbers)
