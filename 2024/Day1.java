@@ -17,15 +17,14 @@ public class Main {
                                                   .collect(Collectors.groupingBy(k -> k, Collectors.counting()));
 
         var part1Result = IntStream.range(0, input.length)
-                                   .map(i -> Math.abs(firstColumnNumbers[i] - secondColumnNumbers[i]))
+                                   .map(i -> Math.abs(firstColumnNumbers[i]- secondColumnNumbers[i]))
                                    .sum();
 
         var part2Result = Arrays.stream(firstColumnNumbers)
                                 .map(k -> k * secondColumnNumberFrequencies.getOrDefault(k, 0L).intValue())
                                 .sum();
 
-        System.out.println("Part 1 Result: " + part1Result);
-        System.out.println("Part 2 Result: " + part2Result);
+        System.out.println("Result 1: " + part1Result + ", result 2: " + part2Result);
     }
 
     static int[] parseInputColumn(String[][] input, int columnI) {
