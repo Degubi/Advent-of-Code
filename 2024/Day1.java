@@ -29,9 +29,9 @@ public class Main {
     }
 
     static int[] parseInputColumn(String[][] input, int columnI) {
-        return IntStream.range(0, input.length)
-                        .map(i -> Integer.parseInt(input[i][columnI]))
-                        .sorted()
-                        .toArray();
+        return Arrays.stream(input)
+                     .mapToInt(k -> Integer.parseInt(k[columnI]))
+                     .sorted()
+                     .toArray();
     }
 }
