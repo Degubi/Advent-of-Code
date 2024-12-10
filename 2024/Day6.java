@@ -29,16 +29,10 @@ public class Main {
                                           .distinct()
                                           .collect(Collectors.toList());
 
-        var allModificationPositions = IntStream.range(0, rowCount)
-                                                .mapToObj(x -> IntStream.range(0, colCount).filter(y -> map[x][y] != '^').mapToObj(y -> new Position(x, y)))
-                                                .flatMap(k -> k)
-                                                .filter(k -> part1VisitedPositions.contains(k))
-                                                .toArray(Position[]::new);
-
         var part1Result = part1VisitedPositions.size();
-        var part2Result = Arrays.stream(allModificationPositions).parallel()
-                                .filter(k -> doesMapModificationCauseLoop(k.x, k.y, initialGuardState, map, rowCount, colCount))
-                                .count();
+        var part2Result = part1VisitedPositions.parallelStream()
+                                               .filter(k -> doesMapModificationCauseLoop(k.x, k.y, initialGuardState, map, rowCount, colCount))
+                                               .count();
 
         System.out.println("Result 1: " + part1Result + ", result 2: " + part2Result);
     }
