@@ -1,80 +1,73 @@
-import java.nio.file.*;
-import java.util.*;
-import java.util.stream.*;
+static void main() throws Exception {
+    var parseResults = Files.lines(Path.of("input.txt"))
+                            .map(k -> parseLine(k))
+                            .collect(Collectors.partitioningBy(k -> k.stopIndex() == -1));
 
-public class Day10 {
-    record LineParseResult(String line, ArrayList<Character> parseState, int stopIndex) {}
+    var part1Result = parseResults.get(false).stream()
+                                  .mapToInt(k -> getIllegalCharacterValue(k.line().charAt(k.stopIndex())))
+                                  .sum();
 
+    var part2Result = parseResults.get(true).stream()
+                                  .mapToLong(k -> getAutocompleteScore(k))
+                                  .sorted()
+                                  .toArray();
 
-    public static void main(String[] args) throws Exception {
-        var parseResults = Files.lines(Path.of("Day10.txt"))
-                                .map(Day10::parseLine)
-                                .collect(Collectors.partitioningBy(k -> k.stopIndex() == -1));
+    System.out.println("Result 1: " + part1Result + ", result 2: " + part2Result[part2Result.length / 2]);
+}
 
-        var part1Result = parseResults.get(false).stream()
-                                      .mapToInt(k -> getIllegalCharacterValue(k.line().charAt(k.stopIndex())))
-                                      .sum();
+static long getAutocompleteScore(LineParseResult parseResult) {
+    return parseResult.parseState().reversed().stream()
+                      .mapToLong(k -> getMissingCharacterValue(k))
+                      .reduce(0, (res, k) -> res * 5 + k);
+}
 
-        var part2Result = parseResults.get(true).stream()
-                                      .mapToLong(Day10::getAutocompleteScore)
-                                      .sorted()
-                                      .toArray();
+static int getIllegalCharacterValue(char character) {
+    return switch(character) {
+        case ')'  -> 3;
+        case ']'  -> 57;
+        case '}'  -> 1197;
+        case '>'  -> 25137;
+        default   -> 0;
+    };
+}
 
-        System.out.println("Result 1: " + part1Result + ", result 2: " + part2Result[part2Result.length / 2]);
-    }
+static int getMissingCharacterValue(char character) {
+    return switch(character) {
+        case '(' -> 1;
+        case '[' -> 2;
+        case '{' -> 3;
+        case '<' -> 4;
+        default  -> 0;
+    };
+}
 
-    static long getAutocompleteScore(LineParseResult parseResult) {
-        return parseResult.parseState().reversed().stream()
-                          .mapToLong(Day10::getMissingCharacterValue)
-                          .reduce(0, (res, k) -> res * 5 + k);
-    }
+static LineParseResult parseLine(String line) {
+    var parseState = new ArrayList<Character>();
 
-    static int getIllegalCharacterValue(char character) {
-        return switch(character) {
-            case ')'  -> 3;
-            case ']'  -> 57;
-            case '}'  -> 1197;
-            case '>'  -> 25137;
-            default   -> 0;
-        };
-    }
+    for(var i = 0; i < line.length(); ++i) {
+        var currentChar = line.charAt(i);
 
-    static int getMissingCharacterValue(char character) {
-        return switch(character) {
-            case '(' -> 1;
-            case '[' -> 2;
-            case '{' -> 3;
-            case '<' -> 4;
-            default  -> 0;
-        };
-    }
+        if(currentChar == '(' || currentChar == '[' || currentChar == '{' || currentChar == '<') {
+            parseState.add(currentChar);
+        }else{
+            var lastChar = parseState.getLast();
 
-    static LineParseResult parseLine(String line) {
-        var parseState = new ArrayList<Character>();
-
-        for(var i = 0; i < line.length(); ++i) {
-            var currentChar = line.charAt(i);
-
-            if(currentChar == '(' || currentChar == '[' || currentChar == '{' || currentChar == '<') {
-                parseState.add(currentChar);
+            if(doPairsMatch(lastChar, currentChar)) {
+                parseState.removeLast();
             }else{
-                var lastChar = parseState.getLast();
-
-                if(doPairsMatch(lastChar, currentChar)) {
-                    parseState.removeLast();
-                }else{
-                    return new LineParseResult(line, parseState, i);
-                }
+                return new LineParseResult(line, parseState, i);
             }
         }
-
-        return new LineParseResult(line, parseState, -1);
     }
 
-    static boolean doPairsMatch(char opening, char closing) {
-        return opening == '(' && closing == ')' ||
-               opening == '{' && closing == '}' ||
-               opening == '[' && closing == ']' ||
-               opening == '<' && closing == '>';
-    }
+    return new LineParseResult(line, parseState, -1);
 }
+
+static boolean doPairsMatch(char opening, char closing) {
+    return opening == '(' && closing == ')' ||
+           opening == '{' && closing == '}' ||
+           opening == '[' && closing == ']' ||
+           opening == '<' && closing == '>';
+}
+
+record LineParseResult(String line, ArrayList<Character> parseState, int stopIndex) {}
