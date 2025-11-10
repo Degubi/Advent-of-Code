@@ -3,13 +3,13 @@ static void main() throws Exception {
                          .map(k -> parseEquation(k))
                          .toArray(Equation[]::new);
 
-    var part1Operators = new BiLongToLongFunction[] { (v1, v2) -> v1 + v2, (v1, v2) -> v1 * v2 };
+    var part1Operators = new LongBinaryOperator[] { (v1, v2) -> v1 + v2, (v1, v2) -> v1 * v2 };
     var part1Result = Arrays.stream(equations)
                             .filter(k -> isEquationSolvable(k, part1Operators))
                             .mapToLong(Equation::result)
                             .sum();
 
-    var part2Operators = new BiLongToLongFunction[] { (v1, v2) -> v1 + v2, (v1, v2) -> v1 * v2, (v1, v2) -> Long.parseLong(new StringBuilder().append(v1).append(v2).toString()) };
+    var part2Operators = new LongBinaryOperator[] { (v1, v2) -> v1 + v2, (v1, v2) -> v1 * v2, (v1, v2) -> Long.parseLong(new StringBuilder().append(v1).append(v2).toString()) };
     var part2Result = Arrays.stream(equations).parallel()
                             .filter(k -> isEquationSolvable(k, part2Operators))
                             .mapToLong(Equation::result)
@@ -46,17 +46,14 @@ static<T> void createPermutations(T[] elements, List<List<T>> fullPermutations, 
     }
 }
 
-static boolean isEquationSolvable(Equation equation, BiLongToLongFunction[] possibleOperators) {
+static boolean isEquationSolvable(Equation equation, LongBinaryOperator[] possibleOperators) {
     return createPermutations(possibleOperators, equation.values.length).stream()
                                                                         .anyMatch(k -> isEquationCorrect(equation, k));
 }
 
-static boolean isEquationCorrect(Equation equation, List<BiLongToLongFunction> operators) {
+static boolean isEquationCorrect(Equation equation, List<LongBinaryOperator> operators) {
     return LongStream.range(1, equation.values.length)
-                     .reduce(equation.values[0], (result, i) -> operators.get((int) i - 1).apply(result, equation.values[(int) i])) == equation.result;
+                     .reduce(equation.values[0], (result, i) -> operators.get((int) i - 1).applyAsLong(result, equation.values[(int) i])) == equation.result;
 }
 
 record Equation(long result, long[] values) {}
-interface BiLongToLongFunction {
-    long apply(long v1, long v2);
-}
