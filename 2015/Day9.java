@@ -24,13 +24,13 @@ static int calculateRouteDistance(String[] route, Map<Set<String>, Integer> city
                     .sum();
 }
 
-static Stream<String[]> generatePermutations(String[] arr) {
-    var elements = new ArrayList<String[]>();
+static<T> Stream<T[]> generatePermutations(T[] arr) {
+    var elements = new ArrayList<T[]>();
     permute(arr, 0, elements);
     return elements.stream();
 }
 
-static void permute(String[] arr, int start, ArrayList<String[]> outElements) {
+static<T> void permute(T[] arr, int start, ArrayList<T[]> outElements) {
     if(start == arr.length - 1) {
         outElements.add(arr.clone());
     }else{
@@ -42,7 +42,7 @@ static void permute(String[] arr, int start, ArrayList<String[]> outElements) {
     }
 }
 
-static void swap(String[] arr, int i, int j) {
+static<T> void swap(T[] arr, int i, int j) {
     var temp = arr[i];
     arr[i] = arr[j];
     arr[j] = temp;
