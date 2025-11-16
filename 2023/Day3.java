@@ -23,7 +23,7 @@ static void main() throws Exception {
                             .collect(Collectors.groupingBy(Digit::validator))
                             .entrySet().stream()
                             .filter(e -> e.getValue().size() == 2)
-                            .map(Entry::getValue)
+                            .map(Map.Entry::getValue)
                             .mapToInt(k -> k.get(0).value() * k.get(1).value())
                             .sum();
 
