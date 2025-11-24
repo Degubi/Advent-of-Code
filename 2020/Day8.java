@@ -3,23 +3,37 @@ static void main() throws Exception {
                             .map(k -> new Instruction(k.substring(0, k.indexOf(' ')), Integer.parseInt(k, k.indexOf(' ') + 1, k.length(), 10)))
                             .toArray(Instruction[]::new);
 
-    var part1Result = execute(instructions).accumulator();
-    var part2Result = Stream.iterate(new TerminatedCorrectlySearchState(0, Arrays.copyOf(instructions, instructions.length), new ExecutionResult(false, -1)), k -> updateSearchState(k, instructions))
-                            .dropWhile(k -> !k.lastExecutionResult().terminatedCorrectly())
-                            .findFirst()
-                            .orElseThrow()
-                            .lastExecutionResult().accumulator();
+    var part1Result = execute(instructions).accumulator;
+    var part2Result = IntStream.range(0, instructions.length)
+                               .mapToObj(i -> execute(replaceInstruction(i, instructions)))
+                               .filter(ExecutionResult::terminatedCorrectly)
+                               .findFirst()
+                               .orElseThrow()
+                               .accumulator;
 
     System.out.println("Result 1: " + part1Result + ", result 2: " + part2Result);
 }
 
 static ExecutionResult execute(Instruction[] instructions) {
-    var finalState = Stream.iterate(new InterpreterState(0, 0, new ArrayList<>()), k -> applyInstruction(k, instructions[k.instructionIndex()]))
-                           .dropWhile(k -> !k.alreadyRanInstructionIndices().contains(k.instructionIndex()) && k.instructionIndex() != instructions.length - 1)
-                           .findFirst()
+    var finalState = Stream.iterate(new InterpreterState(0, 0, new ArrayList<>()), k -> k.instructionIndex == instructions.length ? null : applyInstruction(k, instructions[k.instructionIndex()]))
+                           .takeWhile(k -> k != null && !k.alreadyRanInstructionIndices().contains(k.instructionIndex()))
+                           .reduce((_, l) -> l)
                            .orElseThrow();
 
-    return new ExecutionResult(finalState.instructionIndex() == instructions.length - 1, finalState.accumulator());
+    return new ExecutionResult(finalState.instructionIndex == instructions.length, finalState.accumulator);
+}
+
+static Instruction[] replaceInstruction(int currentModificationIndex, Instruction[] instructions) {
+    var modifiedInstructions = Arrays.copyOf(instructions, instructions.length);
+
+    modifiedInstructions[currentModificationIndex] = switch(modifiedInstructions[currentModificationIndex].name()) {
+        case "nop" -> new Instruction("jmp", modifiedInstructions[currentModificationIndex].value());
+        case "acc" -> modifiedInstructions[currentModificationIndex];
+        case "jmp" -> new Instruction("nop", modifiedInstructions[currentModificationIndex].value());
+        default    -> null;
+    };
+
+    return modifiedInstructions;
 }
 
 static InterpreterState applyInstruction(InterpreterState state, Instruction instruction) {
@@ -37,23 +51,6 @@ static InterpreterState applyInstruction(InterpreterState state, Instruction ins
     };
 }
 
-static TerminatedCorrectlySearchState updateSearchState(TerminatedCorrectlySearchState state, Instruction[] instructions) {
-    var modifiedInstructions = state.modifiedInstructions();
-    var modifiedInstructionIndex = state.modifiedInstructionIndex();
-    var currentModificationIndex = modifiedInstructionIndex + 1;
-
-    modifiedInstructions[modifiedInstructionIndex] = instructions[modifiedInstructionIndex];
-    modifiedInstructions[currentModificationIndex] = switch(modifiedInstructions[currentModificationIndex].name()) {
-        case "nop" -> new Instruction("jmp", modifiedInstructions[currentModificationIndex].value());
-        case "acc" -> modifiedInstructions[currentModificationIndex];
-        case "jmp" -> new Instruction("nop", modifiedInstructions[currentModificationIndex].value());
-        default    -> null;
-    };
-
-    return new TerminatedCorrectlySearchState(currentModificationIndex, modifiedInstructions, execute(modifiedInstructions));
-}
-
 record Instruction(String name, int value) {}
 record InterpreterState(int accumulator, int instructionIndex, ArrayList<Integer> alreadyRanInstructionIndices) {}
 record ExecutionResult(boolean terminatedCorrectly, int accumulator) {}
-record TerminatedCorrectlySearchState(int modifiedInstructionIndex, Instruction[] modifiedInstructions, ExecutionResult lastExecutionResult) {}
