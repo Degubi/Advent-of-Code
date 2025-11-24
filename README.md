@@ -1,12 +1,12 @@
-<p>Total stars: <span style="color: #ffff66;">175*</span></p>
+<p>Total stars: <span style="color: #ffff66;">178*</span></p>
 <div><a href="2025">[2025]</a>&ensp;&ensp;0*</div>
-<div><a href="2024">[2024]</a>&ensp;25*</div>
+<div><a href="2024">[2024]</a>&ensp;27*</div>
 <div><a href="2023">[2023]</a>&ensp;25*</div>
 <div><a href="2022">[2022]</a>&ensp;18*</div>
 <div><a href="2021">[2021]</a>&ensp;13*</div>
 <div><a href="2020">[2020]</a>&ensp;12*</div>
 <div><a href="2019">[2019]</a>&ensp;&ensp;7*</div>
 <div><a href="2018">[2018]</a>&ensp;&ensp;6*</div>
-<div><a href="2017">[2017]</a>&ensp;&ensp;7*</div>
+<div><a href="2017">[2017]</a>&ensp;&ensp;8*</div>
 <div><a href="2016">[2016]</a>&ensp;20*</div>
 <div><a href="2015">[2015]</a>&ensp;42*</div>
