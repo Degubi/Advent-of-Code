@@ -1,6 +1,5 @@
 static void main() throws Exception {
     var instructions = Files.readAllLines(Path.of("input.txt"));
-
     var states = Stream.iterate(new State(50, 0, 0), k -> k.instructionIndex == instructions.size() ? null : applyInstruction(k, instructions))
                        .takeWhile(Objects::nonNull)
                        .toArray(State[]::new);
@@ -18,16 +17,14 @@ static void main() throws Exception {
 }
 
 static State applyInstruction(State state, List<String> instructions) {
-    var instructionIndex = state.instructionIndex;
-    var instruction = instructions.get(instructionIndex);
+    var instruction = instructions.get(state.instructionIndex);
     var rotationCount = Integer.parseInt(instruction, 1, instruction.length(), 10);
     var directionMultiplier = instruction.charAt(0) == 'L' ? -1 : 1;
     var previousValue = state.value;
     var nextValue = previousValue + rotationCount * directionMultiplier;
-    var rotations = directionMultiplier == 1 ? Math.floorDiv(nextValue, 100) - Math.floorDiv(previousValue, 100)
-                                             : Math.ceilDiv(previousValue, 100) - Math.ceilDiv(nextValue, 100);
+    var rotations = Math.floorDiv(directionMultiplier * nextValue, 100) - Math.floorDiv(directionMultiplier * previousValue, 100);
 
-    return new State(nextValue, instructionIndex + 1, rotations);
+    return new State(nextValue, state.instructionIndex + 1, rotations);
 }
 
 record State(int value, int instructionIndex, int rotations) {}
