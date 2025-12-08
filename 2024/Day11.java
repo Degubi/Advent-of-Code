@@ -30,7 +30,7 @@ static long getStoneCount(long stone, long count, HashMap<CacheEntry, Long> ston
         return result;
     }
 
-    var digitCount = ((int) Math.floor(Math.log10(stone))) + 1;
+    var digitCount = ((int) Math.log10(stone)) + 1;
     if(digitCount % 2 == 0) {
          var idk = (long) Math.pow(10, digitCount / 2);
          var result = getStoneCount(stone / idk, nextCount, stoneCountCache) + getStoneCount(stone % idk, nextCount, stoneCountCache);
