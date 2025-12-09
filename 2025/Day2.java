@@ -16,12 +16,28 @@ static void main() throws Exception {
 }
 
 static boolean doesFirstHalfRepeat(long value) {
-     var digitCount = ((int) Math.log10(value)) + 1;
-     var divisor = (int) Math.pow(10, digitCount / 2);
+    var digitCount = ((int) Math.log10(value)) + 1;
+    var divisor = (int) Math.pow(10, digitCount / 2);
 
-     return value / divisor == value % divisor;
+    return value / divisor == value % divisor;
 }
 
 static boolean hasRepeatingSubsequence(long value) {
-    return false; // FIXME Part2
+    var digitCount = ((int) Math.log10(value)) + 1;
+    var digits = Long.toString(value).chars()
+                     .map(Character::getNumericValue)
+                     .boxed()
+                     .toArray(Integer[]::new);
+
+    return IntStream.rangeClosed(1, digitCount / 2)
+                    .anyMatch(c -> isRepeatingSubsequence(digits, c));
+}
+
+private static boolean isRepeatingSubsequence(Integer[] digits, int count) {
+    var subsequences = Arrays.stream(digits)
+                             .gather(Gatherers.windowFixed(count))
+                             .collect(Collectors.toList());
+
+    return subsequences.stream()
+                       .allMatch(subsequences.getFirst()::equals);
 }
