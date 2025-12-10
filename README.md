@@ -1,5 +1,5 @@
-<p>Total stars: <span style="color: #ffff66;">189*</span></p>
-<div><a href="2025">[2025]</a>&ensp;&ensp;9*</div>
+<p>Total stars: <span style="color: #ffff66;">190*</span></p>
+<div><a href="2025">[2025]</a>&ensp;10*</div>
 <div><a href="2024">[2024]</a>&ensp;27*</div>
 <div><a href="2023">[2023]</a>&ensp;25*</div>
 <div><a href="2022">[2022]</a>&ensp;18*</div>
