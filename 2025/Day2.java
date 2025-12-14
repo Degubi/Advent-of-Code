@@ -23,13 +23,12 @@ static boolean doesFirstHalfRepeat(long value) {
 }
 
 static boolean hasRepeatingSubsequence(long value) {
-    var digitCount = ((int) Math.log10(value)) + 1;
     var digits = Long.toString(value).chars()
                      .map(Character::getNumericValue)
                      .boxed()
                      .toArray(Integer[]::new);
 
-    return IntStream.rangeClosed(1, digitCount / 2)
+    return IntStream.rangeClosed(1, digits.length / 2)
                     .anyMatch(c -> isRepeatingSubsequence(digits, c));
 }
 
