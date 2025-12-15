@@ -5,7 +5,7 @@ static void main() throws Exception {
                       .toArray(char[][]::new);
 
     var regions = new ArrayList<Region>();
-    var potentialNewRegions = new ArrayList<>(List.of(new Region(garden[0][0], new ArrayList<>(List.of(new Position(0, 0))))));
+    var potentialNewRegions = new ArrayList<>(List.of(new Region(garden[0][0], new ArrayList<>(List.of(new Point(0, 0))))));
 
     do {
         var currentlyExpandedRegion = potentialNewRegions.removeLast();
@@ -31,25 +31,30 @@ static void main() throws Exception {
                              .mapToInt(k -> k.positions.size() * calculatePerimeter(k.positions))
                              .sum();
 
-    System.out.println("Result 1: " + part1Result); // TODO: Part 2
+    // FIXME: Part2
+    var part2Result = regions.stream()
+                             .mapToInt(k -> k.positions.size())
+                             .sum();
+
+    System.out.println("Result 1: " + part1Result + ", result 2: " + part2Result);
 }
 
-static int calculatePerimeter(ArrayList<Position> positions) {
+static int calculatePerimeter(ArrayList<Point> positions) {
     return positions.stream()
                     .mapToInt(k -> getFreeSideValue(-1, 0, k, positions) + getFreeSideValue(1, 0, k, positions) + getFreeSideValue(0, -1, k, positions) + getFreeSideValue(0, 1, k, positions))
                     .sum();
 }
 
-static int getFreeSideValue(int xOffset, int yOffset, Position currentPosition, ArrayList<Position> positions) {
-    return positions.contains(new Position(currentPosition.x + xOffset, currentPosition.y + yOffset)) ? 0 : 1;
+static int getFreeSideValue(int xOffset, int yOffset, Point currentPosition, ArrayList<Point> positions) {
+    return positions.contains(new Point(currentPosition.x + xOffset, currentPosition.y + yOffset)) ? 0 : 1;
 }
 
-static void handlePosition(int xOffset, int yOffset, Position currentPosition, Region currentlyExpandedRegion, ArrayList<Position> positionQueue, ArrayList<Region> potentialNewRegions, ArrayList<Region> regions, char[][] garden) {
+static void handlePosition(int xOffset, int yOffset, Point currentPosition, Region currentlyExpandedRegion, ArrayList<Point> positionQueue, ArrayList<Region> potentialNewRegions, ArrayList<Region> regions, char[][] garden) {
     var nextX = currentPosition.x + xOffset;
     var nextY = currentPosition.y + yOffset;
 
     if(nextX >= 0 && nextX < garden.length && nextY >= 0 && nextY < garden[0].length) {
-        var nextPosition = new Position(nextX, nextY);
+        var nextPosition = new Point(nextX, nextY);
 
         if(!positionQueue.contains(nextPosition) && !currentlyExpandedRegion.positions.contains(nextPosition)) {
             var nextPositionLetter = garden[nextX][nextY];
@@ -66,5 +71,5 @@ static void handlePosition(int xOffset, int yOffset, Position currentPosition, R
     }
 }
 
-record Position(int x, int y) {}
-record Region(char letter, ArrayList<Position> positions) {}
+record Point(int x, int y) {}
+record Region(char letter, ArrayList<Point> positions) {}
