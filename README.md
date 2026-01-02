@@ -1,4 +1,4 @@
-<p>Total stars: <span style="color: #ffff66;">205*</span></p>
+<p>Total stars: <span style="color: #ffff66;">207*</span></p>
 <div><a href="2025">[2025]</a>&ensp;14*</div>
 <div><a href="2024">[2024]</a>&ensp;29*</div>
 <div><a href="2023">[2023]</a>&ensp;25*</div>
@@ -9,4 +9,4 @@
 <div><a href="2018">[2018]</a>&ensp;&ensp;6*</div>
 <div><a href="2017">[2017]</a>&ensp;12*</div>
 <div><a href="2016">[2016]</a>&ensp;25*</div>
-<div><a href="2015">[2015]</a>&ensp;42*</div>
+<div><a href="2015">[2015]</a>&ensp;44*</div>
