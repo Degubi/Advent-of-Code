@@ -9,10 +9,7 @@ static void main() throws Exception {
                                  .toArray(char[][][]::new);
 
     var part1Result = countNumberOfPapers(paperRemoveSteps[0]) - countNumberOfPapers(paperRemoveSteps[1]);
-    var part2Result = Arrays.stream(paperRemoveSteps)
-                            .gather(Gatherers.windowSliding(2))
-                            .mapToInt(k -> countNumberOfPapers(k.getFirst()) - countNumberOfPapers(k.getLast()))
-                            .sum();
+    var part2Result = countNumberOfPapers(paperRemoveSteps[0]) - countNumberOfPapers(paperRemoveSteps[paperRemoveSteps.length - 1]);
 
     System.out.println("Result 1: " + part1Result + ", result 2: " + part2Result);
 }
