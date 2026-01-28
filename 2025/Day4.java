@@ -3,9 +3,8 @@ static void main() throws Exception {
                         .map(String::toCharArray)
                         .toArray(char[][]::new);
 
-    var paperRemoveSteps = Stream.iterate(new State(null, inputMap), k -> new State(k.current, removeRemovablePapers(k.current)))
-                                 .takeWhile(k -> k.previous == null || countNumberOfPapers(k.previous) != countNumberOfPapers(k.current))
-                                 .map(State::current)
+    var paperRemoveSteps = Stream.iterate(inputMap, k -> removeRemovablePapers(k))
+                                 .takeWhile(Objects::nonNull)
                                  .toArray(char[][][]::new);
 
     var part1Result = countNumberOfPapers(paperRemoveSteps[0]) - countNumberOfPapers(paperRemoveSteps[1]);
@@ -21,14 +20,14 @@ static int countNumberOfPapers(char[][] map) {
 }
 
 static char[][] removeRemovablePapers(char[][] map) {
-    var positions = IntStream.range(0, map.length)
-                             .mapToObj(rowI -> IntStream.range(0, map[0].length)
-                                                        .filter(colI -> isPaperFree(rowI, colI, map))
-                                                        .mapToObj(colI -> new Position(rowI, colI)))
-                             .flatMap(k -> k)
-                             .toArray(Position[]::new);
+    var removablePaperPositions = IntStream.range(0, map.length)
+                                           .mapToObj(rowI -> IntStream.range(0, map[0].length)
+                                                                      .filter(colI -> isPaperFree(rowI, colI, map))
+                                                                      .mapToObj(colI -> new Position(rowI, colI)))
+                                           .flatMap(k -> k)
+                                           .toArray(Position[]::new);
 
-    return Arrays.stream(positions).reduce(copyMap(map), (result, k) -> {
+    return removablePaperPositions.length == 0 ? null : Arrays.stream(removablePaperPositions).reduce(copyMap(map), (result, k) -> {
         result[k.rowI][k.colI] = '.';
         return result;
     }, (k, l) -> l);
@@ -54,4 +53,3 @@ static int isPositionPaper(int rowI, int colI, char[][] input) {
 }
 
 record Position(int rowI, int colI) {}
-record State(char[][] previous, char[][] current) {}
